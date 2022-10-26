@@ -9,8 +9,8 @@ try {
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
+//   const payload = JSON.stringify(github.context.payload, undefined, 2)
+//   console.log(`The event payload: ${payload}`);
 
   const treeUrl = github.context.payload.repository.trees_url
 
@@ -30,6 +30,7 @@ async function checkfiles( http ,treeUrl, treeId) {
 
     const url = treeUrl.replaceAll('{/sha}', `/${treeId}`)
     console.log('Url:', url)
-    await http.getJson(url).then(data => console.log(data))
+    const result = await http.getJson(url).then(data => console.log(data.result))
+    console.log('result:', result)
 
 }
