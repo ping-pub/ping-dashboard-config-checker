@@ -83,7 +83,11 @@ async function checkfiles(http, base, sha) {
                             .then(data => data.result)
 
                         if(f.filename.indexOf('/mainnet') > -1 ) {
-                            console.log(info)
+                            const val = info.result.block.last_commit.signatures.length
+                            core.info(`number of validators: ${val}`)
+                            if(val < 10) {
+                                core.setFailed('10+ validators is required for mainnet')
+                            }
                         }
                     }
                 } catch (err) {
