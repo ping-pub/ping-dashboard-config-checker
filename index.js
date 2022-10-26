@@ -33,15 +33,15 @@ async function checkfiles( http ,base, sha) {
     const result = await http.getJson(url).then(data => data.result)
     console.log('result:', result.files)
 
-    result.files.forEach(f => {
+    for (const f of result.files) {
         if(f.filename.startsWith('src/chains') && f.filename.endsWith('.json')) {
             console.log('in')
             console.log(f.raw_url)
-            const conf = http.getJson(f.raw_url).then(data => data.result)
+            const conf = await http.getJson(f.raw_url).then(data => data.result)
             console.log('config:', conf)
         } else {
             console.log('others:', f.filename)
         }
-    })
+    }
 
 }
