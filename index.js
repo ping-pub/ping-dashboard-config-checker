@@ -61,7 +61,7 @@ async function checkfiles(http, base, sha) {
                             .then(data => data.result)
 
                         if (`v${conf.sdk_version}` !== info.application_version.cosmos_sdk_version) {
-                            core.notice(`API versions do not matched! v${conf.sdk_version} <> ${info.application_version.cosmos_sdk_version}`)
+                            core.notice(`${h} API versions do not matched! v${conf.sdk_version} <> ${info.application_version.cosmos_sdk_version}`)
                         }
                     }
                 } catch (err) {
