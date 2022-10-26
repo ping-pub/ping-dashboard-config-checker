@@ -46,14 +46,12 @@ async function checkfiles(http, base, sha) {
             // 2.api
             if (Array.isArray(conf.api)) {
                 let hasErr = false
-                let host = ''
+                let h = ''
                 try {
-                    for (const h of conf.api) {
-                        
+                    for ( h of conf.api) {
                         if(!h.startsWith('https')) {
                             core.error(`https is required: ${h}`)
                         }
-                        host = h
 
                         const info = await http.getJson(`${h}/cosmos/base/tendermint/v1beta1/node_info`)
                             .then(data => data.result)
@@ -63,7 +61,7 @@ async function checkfiles(http, base, sha) {
                         }
                     }
                 } catch (err) {
-                    core.setFailed(`api ${host} is not available, make sure that CORS is enabled!`)
+                    core.setFailed(`api ${h} is not available, make sure that CORS is enabled!`)
                 }
                 if (!hasErr) core.info('api is ok!', conf.api)
             } else {
@@ -72,7 +70,17 @@ async function checkfiles(http, base, sha) {
 
             // 3.rpc
             if (Array.isArray(conf.rpc)) {
-                core.info('rpc is ok!', conf.rpc)
+                let hasErr = false
+                let host = ''
+                try {
+                    for (host of conf.rpc) {
+                        const info = await http.getJson(`${host}/status`)
+                            .then(data => data.result)
+                    }
+                } catch (err) {
+                    core.setFailed(`api ${host} is not available, make sure that CORS is enabled!`)
+                }
+                if (!hasErr) core.info('rpc is ok!', conf.rpc)
             } else {
                 core.error('rpc is required')
             }
