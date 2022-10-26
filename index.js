@@ -3,9 +3,7 @@ const github = require('@actions/github');
 const hc = require('@actions/http-client');
 
 try {
-    // `who-to-greet` input defined in action metadata file
-    const nameToGreet = core.getInput('who-to-greet');
-    console.log(`Hello ${nameToGreet}!`);
+
     const time = (new Date()).toTimeString();
     core.setOutput("time", time);
     // Get the JSON webhook payload for the event that triggered the workflow
@@ -35,6 +33,7 @@ async function checkfiles(http, base, sha) {
     // check if configs exists and valid
     for (const f of result.files) {
         if (f.filename.startsWith('src/chains') && f.filename.endsWith('.json')) {
+            console.log(`check if ${f.filename} is valid`)
             const conf = await http.getJson(f.raw_url).then(data => data.result)
             /// check list
             // 1. chain name
@@ -74,8 +73,6 @@ async function checkfiles(http, base, sha) {
                 core.error('assets is required')
             }
 
-        } else {
-            console.log('others:', f.filename)
         }
     }
 
