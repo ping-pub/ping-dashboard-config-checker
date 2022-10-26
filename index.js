@@ -79,8 +79,12 @@ async function checkfiles(http, base, sha) {
                 try {
                     for (host of conf.rpc) {
                         core.info(`checking host: ${host}`)
-                        const info = await http.getJson(`${host}/status`)
+                        const info = await http.getJson(`${host}/block`)
                             .then(data => data.result)
+
+                        if(f.filename.indexOf('/mainnet') > -1 ) {
+                            console.log(info)
+                        }
                     }
                 } catch (err) {
                     core.setFailed(`api ${host} is not available, make sure that CORS is enabled!`)
