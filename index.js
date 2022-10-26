@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const hc = require('@actions/http-client');
 
 try {
   // `who-to-greet` input defined in action metadata file
@@ -10,6 +11,26 @@ try {
   // Get the JSON webhook payload for the event that triggered the workflow
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
+
+  const treeUrl = payload.repostory.tree_url
+
+  const http = new hc.HttpClient('ping dashboard agent', [], {keepAlive: true})
+  http.getJson()
+
+  if(github.context.payload.commits) {
+    github.context.payload.commits.forEach(element => {
+        Promise.resolve(checkfiles(http, treeUrl, element.tree_id))
+    });
+  }
+
 } catch (error) {
   core.setFailed(error.message);
+}
+
+async function checkfiles( http ,treeUrl, treeId) {
+
+    const url = treeUrl.replaceAll('{/sha}', `/${treeId}`)
+    console.log(url)
+    await http.getJson(url).then(data => console.log(data))
+
 }
