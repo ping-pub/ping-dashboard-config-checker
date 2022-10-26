@@ -63,7 +63,7 @@ async function checkfiles(http, base, sha) {
                         }
                     }
                 } catch (err) {
-                    core.error(`api ${host} is not available, make sure that CORS is enabled!`)
+                    core.setFailed(`api ${host} is not available, make sure that CORS is enabled!`)
                 }
                 if (!hasErr) core.info('api is ok!', conf.api)
             } else {
