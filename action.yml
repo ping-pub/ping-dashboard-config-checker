@@ -1,7 +1,5 @@
 name: 'ping-dashboard-config-checker'
 description: 'validate if configs in pull request are valid'
-inputs:
-outputs:
 runs:
   using: 'node16'
   main: 'index.js'
