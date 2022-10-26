@@ -46,15 +46,20 @@ async function checkfiles(http, base, sha) {
             // 2.api
             if (Array.isArray(conf.api)) {
                 let hasErr = false
-                for(const h of conf.api) {
-                    const info = await http.getJson(`${h}/cosmos/base/tendermint/v1beta1/node_info`)
-                    .then(data => data.result)
-                    
-                    if(`v${conf.sdk_version}` !== info.application_version.cosmos_sdk_version) {
-                        core.notice(`API versions do not matched! v${conf.sdk_version} <> ${info.application_version.cosmos_sdk_version}`)
+                try {
+                    for (const h of conf.api) {
+                        if(!h.startsWith('https')) throw new Error('https is required')
+                        const info = await http.getJson(`${h}/cosmos/base/tendermint/v1beta1/node_info`)
+                            .then(data => data.result)
+
+                        if (`v${conf.sdk_version}` !== info.application_version.cosmos_sdk_version) {
+                            core.notice(`API versions do not matched! v${conf.sdk_version} <> ${info.application_version.cosmos_sdk_version}`)
+                        }
                     }
+                } catch (err) {
+                    console.log(`${h} is not available, make sure that https and cors is enabled!`)
                 }
-                if(!hasErr) core.info('api is ok!', conf.api)
+                if (!hasErr) core.info('api is ok!', conf.api)
             } else {
                 core.error('api is required')
             }
