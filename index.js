@@ -52,11 +52,6 @@ async function checkfiles(http, base, sha) {
                 for(const h of conf.api) {
                     const info = await http.getJson(`${h}/cosmos/base/tendermint/v1beta1/node_info`)
                     .then(data => data.result)
-                    .error((err) => {
-                        console.log(`${h} is not available! please use https and enable CORS!`)
-                        core.error(err)
-                        hasErr = true
-                    })
                     
                     console.log(info.application_version.cosmos_sdk_version)
                     if(conf.sdk_version !== info.application_version.cosmos_sdk_version) {
