@@ -46,12 +46,14 @@ async function checkfiles(http, base, sha) {
             // 2.api
             if (Array.isArray(conf.api)) {
                 let hasErr = false
+                let host = ''
                 try {
                     for (const h of conf.api) {
                         
                         if(!h.startsWith('https')) {
                             core.error(`https is required: ${h}`)
                         }
+                        host = h
 
                         const info = await http.getJson(`${h}/cosmos/base/tendermint/v1beta1/node_info`)
                             .then(data => data.result)
@@ -61,7 +63,7 @@ async function checkfiles(http, base, sha) {
                         }
                     }
                 } catch (err) {
-                    core.error(`${h} is not available, make sure that CORS is enabled!`)
+                    core.error(`api ${host} is not available, make sure that CORS is enabled!`)
                 }
                 if (!hasErr) core.info('api is ok!', conf.api)
             } else {
