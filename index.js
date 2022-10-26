@@ -12,7 +12,7 @@ try {
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
 
-  const treeUrl = payload.repostory.tree_url
+  const treeUrl = payload.repository.trees_url
 
   const http = new hc.HttpClient('ping dashboard agent', [], {keepAlive: true})
   http.getJson()
