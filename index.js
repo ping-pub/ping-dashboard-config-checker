@@ -12,13 +12,13 @@ try {
 //   const payload = JSON.stringify(github.context.payload, undefined, 2)
 //   console.log(`The event payload: ${payload}`);
 
-  const treeUrl = github.context.payload.repository.trees_url
+  const commitUrl = github.context.payload.repository.commits_url
 
   const http = new hc.HttpClient('ping dashboard agent', [], {keepAlive: true})
 
   if(github.context.payload.commits) {
     github.context.payload.commits.forEach(element => {
-        Promise.resolve(checkfiles(http, treeUrl, element.tree_id))
+        Promise.resolve(checkfiles(http, commitUrl, element.id))
     });
   }
 
@@ -26,11 +26,11 @@ try {
   core.setFailed(error.message);
 }
 
-async function checkfiles( http ,treeUrl, treeId) {
+async function checkfiles( http ,base, sha) {
 
-    const url = treeUrl.replaceAll('{/sha}', `/${treeId}`)
+    const url = base.replaceAll('{/sha}', `/${sha}`)
     console.log('Url:', url)
-    const result = await http.getJson(url).then(data => console.log(data.result))
+    const result = await http.getJson(url).then(data => data.result)
     console.log('result:', result)
 
 }
