@@ -13,10 +13,14 @@ try {
 
     const http = new hc.HttpClient('ping dashboard agent', [], { keepAlive: true })
 
-    if (github.context.payload.commits) {
-        github.context.payload.commits.forEach(element => {
-            Promise.resolve(checkfiles(http, commitUrl, element.id))
-        });
+    // if (github.context.payload.commits) {
+    //     github.context.payload.commits.forEach(element => {
+    //         Promise.resolve(checkfiles(http, commitUrl, element.id))
+    //     });
+    // }
+
+    if(github.context.payload.after) {
+        Promise.resolve(checkfiles(http, commitUrl, github.context.payload.after))
     }
 
 } catch (error) {
