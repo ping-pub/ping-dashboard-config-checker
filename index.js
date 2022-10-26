@@ -31,6 +31,17 @@ async function checkfiles( http ,base, sha) {
     const url = base.replaceAll('{/sha}', `/${sha}`)
     console.log('Url:', url)
     const result = await http.getJson(url).then(data => data.result)
-    console.log('result:', result)
+    console.log('result:', result.files)
+
+    result.files.forEach(f => {
+        if(f.filename.startsWith('src/chains') && f.filename.endsWith('.json')) {
+            console.log('in')
+            console.log(f.raw_url)
+            const conf = http.getJson(f.raw_url).then(data => data.result)
+            console.log('config:', conf)
+        } else {
+            console.log('others:', f.filename)
+        }
+    })
 
 }
