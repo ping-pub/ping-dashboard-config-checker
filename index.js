@@ -10,9 +10,9 @@ try {
   core.setOutput("time", time);
   // Get the JSON webhook payload for the event that triggered the workflow
   const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload.repository}`);
+  console.log(`The event payload: ${payload}`);
 
-  const treeUrl = payload.repository.trees_url
+  const treeUrl = github.context.payload.repository.trees_url
 
   const http = new hc.HttpClient('ping dashboard agent', [], {keepAlive: true})
   http.getJson()
