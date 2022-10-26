@@ -15,7 +15,6 @@ try {
   const treeUrl = github.context.payload.repository.trees_url
 
   const http = new hc.HttpClient('ping dashboard agent', [], {keepAlive: true})
-  http.getJson()
 
   if(github.context.payload.commits) {
     github.context.payload.commits.forEach(element => {
