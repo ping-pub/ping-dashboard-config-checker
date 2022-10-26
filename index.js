@@ -35,9 +35,7 @@ async function checkfiles(http, base, sha) {
     // check if configs exists and valid
     for (const f of result.files) {
         if (f.filename.startsWith('src/chains') && f.filename.endsWith('.json')) {
-            console.log(f.raw_url)
             const conf = await http.getJson(f.raw_url).then(data => data.result)
-            console.log('config:', conf)
             /// check list
             // 1. chain name
             if (conf.chain_name) {
@@ -53,9 +51,8 @@ async function checkfiles(http, base, sha) {
                     const info = await http.getJson(`${h}/cosmos/base/tendermint/v1beta1/node_info`)
                     .then(data => data.result)
                     
-                    console.log(info.application_version.cosmos_sdk_version)
-                    if(conf.sdk_version !== info.application_version.cosmos_sdk_version) {
-                        core.notice(`API versions do not matched! ${conf.sdk_version} <> ${info.application_version.cosmos_sdk_version}`)
+                    if(`v${conf.sdk_version}` !== info.application_version.cosmos_sdk_version) {
+                        core.notice(`API versions do not matched! v${conf.sdk_version} <> ${info.application_version.cosmos_sdk_version}`)
                     }
                 }
                 if(!hasErr) core.info('api is ok!', conf.api)
