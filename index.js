@@ -9,6 +9,8 @@ try {
 
     const commitUrl = github.context.payload.repository.commits_url
 
+    console.log('check update for:', commitUrl)
+
     const http = new hc.HttpClient('ping dashboard agent', [], { keepAlive: true })
 
     if (github.context.payload.commits) {
