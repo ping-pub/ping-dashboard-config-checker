@@ -9,7 +9,7 @@ try {
 
     const commitUrl = github.context.payload.repository.commits_url
 
-    console.log('check update for:', JSON.stringify(github.context.payload))
+    // console.log('check update for:', JSON.stringify(github.context.payload))
 
     const http = new hc.HttpClient('ping dashboard agent', [], { keepAlive: true })
 
@@ -52,6 +52,7 @@ async function checkfiles(http, base, sha) {
                 let h = ''
                 try {
                     for ( h of conf.api) {
+                        core.info(`checking host: ${h}`)
                         if(!h.startsWith('https')) {
                             core.error(`https is required: ${h}`)
                         }
@@ -77,6 +78,7 @@ async function checkfiles(http, base, sha) {
                 let host = ''
                 try {
                     for (host of conf.rpc) {
+                        core.info(`checking host: ${host}`)
                         const info = await http.getJson(`${host}/status`)
                             .then(data => data.result)
                     }
