@@ -29,7 +29,7 @@ try {
 async function checkfiles( http ,treeUrl, treeId) {
 
     const url = treeUrl.replaceAll('{/sha}', `/${treeId}`)
-    console.log(url)
+    console.log('Url:', url)
     await http.getJson(url).then(data => console.log(data))
 
 }
