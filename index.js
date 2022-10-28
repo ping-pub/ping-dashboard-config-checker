@@ -75,6 +75,7 @@ async function checkfiles(http, files) {
                         }
                     }
                 } catch (err) {
+                    hasErr = true
                     core.setFailed(`api ${h} is not available, make sure that CORS is enabled!`)
                 }
                 if (!hasErr) core.info('api is ok!', conf.api)
@@ -101,6 +102,7 @@ async function checkfiles(http, files) {
                         }
                     }
                 } catch (err) {
+                    hasErr = true
                     core.setFailed(`api ${host} is not available, make sure that CORS is enabled!`)
                 }
                 if (!hasErr) core.info('rpc is ok!', conf.rpc)
