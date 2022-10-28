@@ -7,8 +7,6 @@ try {
     const time = (new Date()).toTimeString();
     core.setOutput("time", time);
 
-    const commitUrl = github.context.payload.repository.commits_url
-
     console.log('check update for:', JSON.stringify(github.context.payload, null, 2))
 
     const http = new hc.HttpClient('ping dashboard agent', [], { keepAlive: true })
@@ -18,23 +16,35 @@ try {
     //         Promise.resolve(checkfiles(http, commitUrl, element.id))
     //     });
     // }
-
-    if(github.context.payload.after) {
-        Promise.resolve(checkfiles(http, commitUrl, github.context.payload.after))
+    if(github.context.payload.pull_request) {
+        const url = `${github.context.payload.pull_request._links.self.href}/files`
+        Promise.resolve(fetchFilesByPullRequest(http, url))
+    } else if(github.context.payload.after) {
+        const commitUrl = github.context.payload.repository.commits_url
+        Promise.resolve(fetchFilesByHash(http, commitUrl, github.context.payload.after))
     }
 
 } catch (error) {
     core.setFailed(error.message);
 }
 
-async function checkfiles(http, base, sha) {
+async function fetchFilesByPullRequest(http, url) {
+    const result = await http.getJson(url).then(data => data.result)
+    checkfiles(http, result)
+}
+
+async function fetchFilesByHash(http, base, sha) {
 
     // fetch latest commits
     const url = base.replaceAll('{/sha}', `/${sha}`)
     const result = await http.getJson(url).then(data => data.result)
+    checkfiles(http, result.files)
+}
+
+async function checkfiles(http, files) {
 
     // check if configs exists and valid
-    for (const f of result.files) {
+    for (const f of files) {
         if (f.filename.startsWith('src/chains') && f.filename.endsWith('.json')) {
             console.log(`check if ${f.filename} is valid`)
             const conf = await http.getJson(f.raw_url).then(data => data.result)
@@ -43,7 +53,7 @@ async function checkfiles(http, base, sha) {
             if (conf.chain_name) {
                 core.info('chain_name is ok!', conf.chain_name)
             } else {
-                core.error('chain_name is required')
+                core.setFailed('chain_name is required')
             }
 
             // 2.api
@@ -54,7 +64,7 @@ async function checkfiles(http, base, sha) {
                     for ( h of conf.api) {
                         core.info(`checking host: ${h}`)
                         if(!h.startsWith('https')) {
-                            core.error(`https is required: ${h}`)
+                            core.setFailed(`https is required: ${h}`)
                         }
 
                         const info = await http.getJson(`${h}/cosmos/base/tendermint/v1beta1/node_info`)
@@ -69,7 +79,7 @@ async function checkfiles(http, base, sha) {
                 }
                 if (!hasErr) core.info('api is ok!', conf.api)
             } else {
-                core.error('api is required')
+                core.setFailed('api is required, must be array')
             }
 
             // 3.rpc
@@ -95,14 +105,14 @@ async function checkfiles(http, base, sha) {
                 }
                 if (!hasErr) core.info('rpc is ok!', conf.rpc)
             } else {
-                core.error('rpc is required')
+                core.setFailed('rpc is required, must be array')
             }
 
             // 2.assets
             if (Array.isArray(conf.assets)) {
                 core.info('assets is ok!', conf.assets)
             } else {
-                core.error('assets is required')
+                core.setFailed('assets is required')
             }
 
         }

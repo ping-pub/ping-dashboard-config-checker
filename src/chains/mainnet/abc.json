@@ -2,7 +2,7 @@
     "chain_name": "cosmos",
     "api": ["https://cosmos.api.ping.pub", "https://lcd-cosmoshub.blockapsis.com"],
     "rpc": ["https://evmos-rpc.polkachu.com:443"],
-    "sdk_version": "0.45.1",
+    "sdk_version": "0.45.2",
     "coin_type": "118",
     "min_tx_fee": "8000",
     "addr_prefix": "cosmos",
