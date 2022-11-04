@@ -46,7 +46,7 @@ async function checkfiles(http, files) {
     // check if configs exists and valid
     for (const f of files) {
         if (f.filename.startsWith('src/chains') && f.filename.endsWith('.json')) {
-            console.log(`check if ${f.filename} is valid`)
+            // console.log(`check if ${f.filename} is valid`)
             const conf = await http.getJson(f.raw_url).then(data => data.result)
             /// check list
             // 1. chain name
@@ -71,7 +71,7 @@ async function checkfiles(http, files) {
                             .then(data => data.result)
 
                         if (`v${conf.sdk_version}` !== info.application_version.cosmos_sdk_version) {
-                            core.notice(`${h} API versions do not matched! v${conf.sdk_version} <> ${info.application_version.cosmos_sdk_version}`)
+                            core.notice(`${h} API versions do not matched! v${conf.sdk_version} in config <> ${info.application_version.cosmos_sdk_version} on ${h}`)
                         }
                     }
                 } catch (err) {
