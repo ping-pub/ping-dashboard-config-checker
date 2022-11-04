@@ -7,7 +7,7 @@ try {
     const time = (new Date()).toTimeString();
     core.setOutput("time", time);
 
-    console.log('check update for:', JSON.stringify(github.context.payload, null, 2))
+    // console.log('check update for:', JSON.stringify(github.context.payload, null, 2))
 
     const http = new hc.HttpClient('ping dashboard agent', [], { keepAlive: true })
 
@@ -46,7 +46,7 @@ async function checkfiles(http, files) {
     // check if configs exists and valid
     for (const f of files) {
         if (f.filename.startsWith('src/chains') && f.filename.endsWith('.json')) {
-            // console.log(`check if ${f.filename} is valid`)
+            console.log(`check if ${f.filename} is valid`)
             const conf = await http.getJson(f.raw_url).then(data => data.result)
             /// check list
             // 1. chain name
